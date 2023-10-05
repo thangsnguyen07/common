@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Global, Module } from '@nestjs/common'
 
+import * as services from '@services'
+
+const providers = Object.values(services)
+
+@Global()
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: providers,
+  exports: providers,
 })
-export class AppModule {}
+export class CommonModule {}

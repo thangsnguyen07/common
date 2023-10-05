@@ -18,7 +18,15 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@/*": ["src/*"]
+      "@decorators": ["src/decorators"],
+      "@services": ["src/services"],
+      "@http": ["src/http"],
+      "@middlewares": ["src/middlewares"],
+      "@interfaces": ["src/interfaces"],
+      "@models": ["src/models"],
+      "@constants": ["src/constants"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "test"]
 }
