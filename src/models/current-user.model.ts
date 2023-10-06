@@ -1,6 +1,6 @@
-import { ICurrentUser } from '@interfaces'
+import { SupportedRoles } from 'src/enums'
 
-import { SupportedRoles } from '@constants'
+import { ICurrentUser } from '@interfaces'
 
 export class CurrentUser {
   private _email?: string
