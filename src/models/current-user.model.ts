@@ -1,4 +1,4 @@
-import { SupportedRoles } from 'src/enums'
+import { SupportedRoles } from '@enums'
 
 import { ICurrentUser } from '@interfaces'
 

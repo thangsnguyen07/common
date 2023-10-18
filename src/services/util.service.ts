@@ -16,6 +16,13 @@ export class UtilService {
       return true
     }
 
+    // If some of the arrays type is not array then return false.
+    const isNotArray = arrays.some((array) => !Array.isArray(array))
+
+    if (isNotArray) {
+      return false
+    }
+
     const sortedArrays = arrays.map((arr) => [...arr].sort())
 
     const firstArray = sortedArrays[0]
