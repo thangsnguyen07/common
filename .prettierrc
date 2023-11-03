@@ -17,7 +17,8 @@
     "^@middlewares",
     "^@interfaces",
     "^@utils",
-    "^@constants",
+    "^@enums",
+    "^@exceptions",
     "^[./]"
   ],
   "plugins": ["@trivago/prettier-plugin-sort-imports"],
