@@ -15,3 +15,5 @@ export * from './interfaces'
 export * from './interceptors'
 
 export * from './exceptions'
+
+export * from './controllers'
