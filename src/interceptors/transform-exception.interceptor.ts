@@ -1,16 +1,18 @@
-import { catchError, map, throwError } from 'rxjs'
+import { Prisma } from '@prisma/client'
+import { catchError, throwError } from 'rxjs'
 
 import {
   CallHandler,
   ExecutionContext,
   HttpException,
+  HttpStatus,
   Injectable,
   NestInterceptor,
   NotFoundException,
   ValidationError,
 } from '@nestjs/common'
 
-import { SuccessJsonData, SuccessResponse } from '@interfaces'
+import { ErrorResponse, SuccessResponse } from '@models'
 
 import { ErrorCode } from '@enums'
 
@@ -18,17 +20,8 @@ import { ValidationException, formatValidationException } from '@exceptions'
 
 @Injectable()
 export class TransformResponseInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler<SuccessJsonData>) {
+  intercept(context: ExecutionContext, next: CallHandler<SuccessResponse | ErrorResponse>) {
     return next.handle().pipe(
-      map(
-        (response): SuccessResponse => ({
-          timestamps: new Date().toISOString(),
-          success: true,
-          errors: null,
-          message: response.message,
-          data: response.data,
-        })
-      ),
       catchError((error) => {
         if (error instanceof ValidationException) {
           const errResponse = error.getResponse() as any
@@ -43,13 +36,25 @@ export class TransformResponseInterceptor implements NestInterceptor {
         if (error instanceof NotFoundException) {
           return throwError(
             () =>
-              new NotFoundException({
-                timestamps: new Date().toISOString(),
-                success: false,
-                code: ErrorCode.NOT_FOUND,
-                message: error.message || 'Resource not found',
-                errors: null,
-              })
+              new NotFoundException(
+                new ErrorResponse(
+                  ErrorCode.RESOURCE_NOT_FOUND,
+                  error?.message || 'Resource not found'
+                )
+              )
+          )
+        }
+
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          return throwError(
+            () =>
+              new HttpException(
+                new ErrorResponse(
+                  ErrorCode.TRANSACTION_FAILED,
+                  error?.message || 'Transaction failed'
+                ),
+                HttpStatus.BAD_REQUEST
+              )
           )
         }
 
@@ -57,13 +62,7 @@ export class TransformResponseInterceptor implements NestInterceptor {
         return throwError(
           () =>
             new HttpException(
-              {
-                timestamps: new Date().toISOString(),
-                success: false,
-                code: ErrorCode.INTERNAL_SERVER_ERROR,
-                message: error.message || 'Something went wrong',
-                errors: null,
-              },
+              new ErrorResponse(ErrorCode.GENERAL_ERROR, error?.message || 'Something went wrong'),
               error.status
             )
         )
