@@ -17,3 +17,5 @@ export * from './interceptors'
 export * from './exceptions'
 
 export * from './controllers'
+
+export * from './utils'
